@@ -19,6 +19,7 @@ const GAME_LIBRARY: Record<MoodId, GameRecommendation[]> = {
     { title: "Ratchet & Clank: Rift Apart", description: "A cinematic, interdimensional adventure.", why: "High-energy fun with spectacular visuals.", genre: "Action-Platformer" },
     { title: "Sackboy: A Big Adventure", description: "A charming, creative cooperative platformer.", why: "Whimsical levels and a fantastic, upbeat soundtrack.", genre: "Platformer" },
     { title: "A Short Hike", description: "A peaceful, bite-sized adventure up a mountain.", why: "Gentle exploration that feels like a warm hug.", genre: "Adventure" }
+     
   ],
   sad: [
     { title: "Gris", description: "A beautiful journey through a world of color and grief.", why: "Provides a stunning space to process sadness through art.", genre: "Artistic Platformer" },
@@ -144,9 +145,9 @@ export async function getGameRecommendation(selectedMoods: MoodId[]): Promise<Ga
 
   // Pool all potential games from selected moods
   let pool: GameRecommendation[] = [];
-  selectedMoods.forEach(mood => {
+  for (const mood of selectedMoods) {
     pool = [...pool, ...GAME_LIBRARY[mood]];
-  });
+  }
 
   // Filter out used games if possible
   let filteredPool = pool.filter(game => !usedGames.includes(game.title));

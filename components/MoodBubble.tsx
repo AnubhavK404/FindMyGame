@@ -12,7 +12,7 @@ interface MoodBubbleProps {
   disabled: boolean;
 }
 
-export const MoodBubble: React.FC<MoodBubbleProps> = ({ 
+export const MoodBubble: React.FC<MoodBubbleProps> = React.memo(({ 
   mood, 
   isSelected, 
   onToggle, 
@@ -24,6 +24,8 @@ export const MoodBubble: React.FC<MoodBubbleProps> = ({
     setMounted(true);
   }, []);
 
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   return (
     <motion.button
       layout
@@ -31,7 +33,7 @@ export const MoodBubble: React.FC<MoodBubbleProps> = ({
       animate={{ 
         scale: 1, 
         opacity: 1,
-        y: [0, -4, 0],
+        y: prefersReducedMotion ? 0 : [0, -4, 0],
       }}
       transition={{
         y: {
@@ -86,4 +88,4 @@ export const MoodBubble: React.FC<MoodBubbleProps> = ({
       </AnimatePresence>
     </motion.button>
   );
-};
+});
