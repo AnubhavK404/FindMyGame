@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, TargetAndTransition } from 'framer-motion';
 import { MoodConfig, MoodId, getMoodConfig } from '@/lib/moodMap';
 import { RefreshCcw, ArrowLeft, Share2, Gamepad2, Sparkles } from 'lucide-react';
 import { GameRecommendation } from '@/lib/recommendGame';
@@ -20,7 +20,7 @@ const Particle: React.FC<{ color: string; type: MoodConfig['particleType'] }> = 
   const initialY = Math.random() * 100;
   const size = Math.random() * 40 + 10;
   
-  const getAnimation = () => {
+  const getAnimation = (): TargetAndTransition => {
     switch (type) {
       case 'jitter':
         return {

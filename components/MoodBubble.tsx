@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MoodConfig } from '@/lib/moodMap';
+import { MoodConfig, MoodId } from '@/lib/moodMap';
 import { cn } from '@/lib/utils';
 
 interface MoodBubbleProps {
   mood: MoodConfig;
   isSelected: boolean;
-  onToggle: (id: string) => void;
+  onToggle: (id: MoodId) => void;
   disabled: boolean;
 }
 
