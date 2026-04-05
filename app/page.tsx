@@ -77,24 +77,10 @@ export default function MoodMixer() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="relative min-h-screen flex flex-col items-center justify-between p-6 md:p-12"
           >
-            {/* Ambient Background */}
+            {/* Ambient Background - Optimized */}
             <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-              <motion.div 
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-[10%] -left-[10%] w-[70%] h-[70%] rounded-full bg-indigo-500/10 blur-[120px]"
-              />
-              <motion.div 
-                animate={{
-                  scale: [1.2, 1, 1.2],
-                  opacity: [0.15, 0.3, 0.15],
-                }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute -bottom-[10%] -right-[10%] w-[70%] h-[70%] rounded-full bg-purple-500/10 blur-[120px]"
-              />
+              <div className="absolute -top-[20%] -left-[10%] w-[80%] h-[80%] rounded-full bg-indigo-600/5 blur-[120px] will-change-transform" />
+              <div className="absolute -bottom-[20%] -right-[10%] w-[80%] h-[80%] rounded-full bg-purple-600/5 blur-[120px] will-change-transform" />
             </div>
 
             {/* Header */}
@@ -112,39 +98,51 @@ export default function MoodMixer() {
             </header>
 
             {/* Selection Content */}
-            <div className="w-full max-w-5xl mx-auto flex flex-col items-center gap-12 md:gap-20 py-12">
-              <div className="space-y-4 md:space-y-6 text-center">
+            <div className="w-full max-w-6xl mx-auto flex flex-col items-center gap-16 md:gap-24 py-12">
+              <div className="space-y-6 text-center">
                 <motion.h1 
-                  initial={{ y: 20, opacity: 0 }}
+                  initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  className="text-4xl md:text-8xl font-black tracking-tighter leading-[0.9]"
+                  className="text-5xl md:text-9xl font-black tracking-tighter leading-[0.8] uppercase"
                 >
-                  What should you <br/> 
-                  <span className="text-white/15 italic font-serif text-3xl md:text-7xl block mt-2">play today?</span>
+                  Find your <br/> 
+                  <span className="text-white/10 italic font-serif lowercase tracking-normal -mt-2 block">next world.</span>
                 </motion.h1>
               </div>
 
               <motion.div 
-                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-6 w-full px-4"
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 w-full px-4"
                 initial="hidden"
                 animate="visible"
                 variants={{
                   hidden: { opacity: 0 },
                   visible: {
                     opacity: 1,
-                    transition: { staggerChildren: 0.05 }
+                    transition: { staggerChildren: 0.03 }
                   }
                 }}
               >
-                {Object.values(MOODS).map(mood => (
-                  <div key={mood.id} className="flex justify-center">
+                {Object.values(MOODS).map((mood, i) => (
+                  <motion.div 
+                    key={mood.id} 
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: { y: 0, opacity: 1 }
+                    }}
+                    className={cn(
+                      "flex justify-center",
+                      i === 0 && "sm:col-span-2 sm:row-span-1",
+                      i === 4 && "md:col-span-2",
+                      i === 7 && "lg:col-span-2"
+                    )}
+                  >
                     <MoodBubble
                       mood={mood}
                       isSelected={selectedMoods.includes(mood.id)}
                       onToggle={toggleMood}
                       disabled={selectedMoods.length >= 3}
                     />
-                  </div>
+                  </motion.div>
                 ))}
               </motion.div>
             </div>
@@ -216,15 +214,9 @@ export default function MoodMixer() {
         )}
       </AnimatePresence>
 
-      {/* Global Grain */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.02] z-[9999] mix-blend-overlay">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <filter id="noise">
-            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#noise)" />
-        </svg>
-      </div>
+      {/* Global Grain - Optimized static noise */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.015] z-[9999] mix-blend-overlay"
+           style={{ backgroundImage: `url("/noise.png")`, backgroundRepeat: 'repeat' }} />
     </main>
   );
 }

@@ -15,22 +15,12 @@ interface MoodSceneProps {
   onShare: () => void;
 }
 
-const Particle: React.FC<{ color: string; type: MoodConfig['particleType'] }> = React.memo(({ color, type }) => {
+const Particle: React.FC<{ color: string; type: MoodConfig['particleType'] }> = ({ color, type }) => {
   const initialX = Math.random() * 100;
   const initialY = Math.random() * 100;
   const size = Math.random() * 40 + 10;
   
-  // Check for reduced motion preference
-  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  
   const getAnimation = (): TargetAndTransition => {
-    if (prefersReducedMotion) {
-      return {
-        opacity: 0.2,
-        transition: { duration: 0 }
-      };
-    }
-    
     switch (type) {
       case 'jitter':
         return {
@@ -88,7 +78,7 @@ const Particle: React.FC<{ color: string; type: MoodConfig['particleType'] }> = 
       }}
     />
   );
-});
+};
 
 export const MoodScene: React.FC<MoodSceneProps> = ({
   selectedMoodIds,
@@ -106,8 +96,6 @@ export const MoodScene: React.FC<MoodSceneProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   const configs = useMemo(() => 
     selectedMoodIds.map(id => getMoodConfig(id)), 
     [selectedMoodIds]
@@ -123,7 +111,7 @@ export const MoodScene: React.FC<MoodSceneProps> = ({
       {/* Mesh Background */}
       <div className="absolute inset-0 z-0">
         <motion.div
-          animate={prefersReducedMotion ? {} : {
+          animate={{
             rotate: [0, 5, -5, 0],
             scale: [1, 1.1, 1],
           }}
@@ -133,7 +121,7 @@ export const MoodScene: React.FC<MoodSceneProps> = ({
           {configs.map((config, i) => (
             <motion.div
               key={`bg-${i}`}
-              animate={prefersReducedMotion ? {} : {
+              animate={{
                 x: [Math.random() * 100 - 50, Math.random() * 100 - 50],
                 y: [Math.random() * 100 - 50, Math.random() * 100 - 50],
               }}
@@ -156,23 +144,20 @@ export const MoodScene: React.FC<MoodSceneProps> = ({
       {/* Overlays */}
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none" />
       <div 
-        className="absolute inset-0 opacity-20 pointer-events-none z-10 mix-blend-overlay"
+        className="absolute inset-0 opacity-15 pointer-events-none z-10 mix-blend-overlay"
         style={{ 
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+          backgroundImage: `url("/noise.png")`,
+          backgroundRepeat: 'repeat'
         }}
       />
       
-      {/* Particles */}
+      {/* Particles - Optimized */}
       <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
-        {mounted && configs.map((config, i) => {
-          // Reduce particles on mobile for performance
-          const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-          const particleCount = isMobile ? 6 : 12;
-          
-          return Array.from({ length: particleCount }).map((_, j) => (
+        {mounted && configs.map((config, i) => (
+          Array.from({ length: 6 }).map((_, j) => (
             <Particle key={`${i}-${j}`} color={config.tertiaryColor || config.primaryColor} type={config.particleType} />
-          ));
-        })}
+          ))
+        ))}
       </div>
 
       {/* Main Content */}

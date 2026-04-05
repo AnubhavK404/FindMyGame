@@ -28,37 +28,35 @@ export const MoodBubble: React.FC<MoodBubbleProps> = React.memo(({
 
   return (
     <motion.button
-      layout
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ 
-        scale: 1, 
-        opacity: 1,
-        y: prefersReducedMotion ? 0 : [0, -4, 0],
-      }}
-      transition={{
-        y: {
-          duration: mounted ? 4 + Math.random() * 2 : 5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }
-      }}
       whileHover={{ 
         scale: 1.05,
-        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        y: -5,
+        backgroundColor: "rgba(255, 255, 255, 0.08)",
       }}
       whileTap={{ scale: 0.95 }}
       onClick={() => onToggle(mood.id)}
       disabled={disabled && !isSelected}
       className={cn(
-        "group relative flex flex-col items-center justify-center p-4 md:p-6 rounded-3xl transition-all duration-500",
-        "bg-white/5 backdrop-blur-2xl border border-white/10",
-        "w-full aspect-square max-w-[120px] md:max-w-[150px]",
+        "group relative flex flex-col items-center justify-center p-4 md:p-6 rounded-[2rem] transition-all duration-500",
+        "bg-white/[0.03] border border-white/10 hover:border-white/20",
+        "w-full aspect-square max-w-[120px] md:max-w-[150px] overflow-hidden",
         isSelected 
-          ? "border-white/40 bg-white/15 shadow-[0_0_40px_-10px_rgba(255,255,255,0.2)] ring-1 ring-white/30" 
-          : "hover:border-white/20",
-        disabled && !isSelected && "opacity-10 cursor-not-allowed grayscale blur-[2px]"
+          ? "border-white/40 bg-white/10 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.5)]" 
+          : "",
+        disabled && !isSelected && "opacity-20 cursor-not-allowed grayscale"
       )}
     >
+      {/* Background Gradient Layer */}
+      <div 
+        className={cn(
+          "absolute inset-0 opacity-0 transition-opacity duration-700",
+          isSelected ? "opacity-20" : "group-hover:opacity-10"
+        )}
+        style={{ 
+          background: `radial-gradient(circle at center, ${mood.primaryColor}, transparent 70%)` 
+        }} 
+      />
+
       <motion.span 
         animate={isSelected ? { scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] } : {}}
         transition={{ duration: 0.5 }}
@@ -74,18 +72,16 @@ export const MoodBubble: React.FC<MoodBubbleProps> = React.memo(({
         {mood.label}
       </span>
 
-      {/* Dynamic Background Glow */}
-      <AnimatePresence>
-        {isSelected && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1.2 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="absolute inset-0 -z-10 blur-3xl rounded-full opacity-30"
-            style={{ backgroundColor: mood.primaryColor }}
-          />
-        )}
-      </AnimatePresence>
+      {/* Selection Ring */}
+      {isSelected && (
+        <motion.div
+          layoutId="selection-ring"
+          className="absolute inset-0 border-2 border-white/40 rounded-[2rem] z-20 pointer-events-none"
+          initial={false}
+          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+        />
+      )}
     </motion.button>
+
   );
 });
